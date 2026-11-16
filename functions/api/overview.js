@@ -39,7 +39,17 @@ export async function loadOverview({ token = '', fetchImpl = fetch } = {}) {
 
   async function githubGet(path) {
     const res = await fetchImpl(`${API_ROOT}${path}`, { headers });
-    if (!res.ok) throw errorForGitHub(res.status, res.headers.get('x-ratelimit-remaining'));
+    if (!res.ok) {
+      console.error('GitHub API request failed', {
+        path,
+        status: res.status,
+        authenticated: Boolean(token),
+        rateLimitRemaining: res.headers.get('x-ratelimit-remaining'),
+        rateLimitResource: res.headers.get('x-ratelimit-resource'),
+        githubRequestId: res.headers.get('x-github-request-id'),
+      });
+      throw errorForGitHub(res.status, res.headers.get('x-ratelimit-remaining'));
+    }
     return res.json();
   }
 
