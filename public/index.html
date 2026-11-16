@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f4f0" />
+    <meta name="description" content="Painel de deployments efêmeros do Kayky Academy. Pull Requests do GitHub com previews na AWS ECS." />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700;750;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <title>Ambientes de preview — Kayky Deployments</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegação">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 42 42" fill="none"><path d="m21 4 16 9-16 9L5 13 21 4Zm-16 19 16 9 16-9M5 32l16 9 16-9" stroke="currentColor" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <div class="brand-copy"><strong>Kayky Deployments</strong><span>kaykygarcia.dev</span></div>
+        </div>
+
+        <div class="nav-caption">WORKSPACE</div>
+        <nav class="nav-links">
+          <a href="#ambientes" class="nav-link active" aria-current="page"><span class="nav-icon" data-icon="layers"></span>Ambientes de preview</a>
+          <a href="#atividade" class="nav-link"><span class="nav-icon" data-icon="activity"></span>Atividade recente</a>
+          <a href="https://github.com/kaykygarcia/academy-preview-api/pulls" class="nav-link" target="_blank" rel="noopener noreferrer"><span class="nav-icon" data-icon="git-pull-request"></span>Pull requests<span class="nav-external" data-icon="external-link"></span></a>
+        </nav>
+
+        <div class="sidebar-foot">
+          <div class="source-card">
+            <span class="source-symbol" data-icon="server"></span>
+            <div><strong>GitHub → AWS ECS</strong><span>Fonte: GitHub Deployments</span></div>
+            <span class="source-dot" aria-hidden="true"></span>
+          </div>
+          <div class="side-copyright">Um projeto Kayky Academy · 2026</div>
+        </div>
+      </aside>
+
+      <main class="main" id="ambientes">
+        <header class="header">
+          <div class="header-copy">
+            <div class="eyebrow">KAYKYGARCIA.DEV <span class="eyebrow-divider">/</span> ACADEMY</div>
+            <h1>Ambientes de preview<span class="heading-dot">.</span></h1>
+            <p>Deployments efêmeros de Pull Requests do GitHub na AWS ECS.</p>
+          </div>
+          <div class="header-actions">
+            <a class="github-button" href="https://github.com/kaykygarcia/academy-preview-api" target="_blank" rel="noopener noreferrer"><span data-icon="github"></span><span>Repositório</span><span data-icon="arrow-up-right"></span></a>
+            <button class="refresh-button" id="refresh-button" type="button" title="Atualizar dados agora" aria-label="Atualizar dados"><span data-icon="refresh-cw"></span></button>
+          </div>
+        </header>
+
+        <section class="overview" aria-label="Visão geral">
+          <article class="stat-card">
+            <div class="stat-icon neutral" data-icon="git-pull-request"></div>
+            <div class="stat-copy"><span class="stat-label">Pull requests abertos</span><strong id="metric-open">—</strong><span class="stat-note">No repositório</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon positive" data-icon="check-circle"></div>
+            <div class="stat-copy"><span class="stat-label">Previews publicados</span><strong id="metric-ready">—</strong><span class="stat-note">Commit atual do PR</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon warm" data-icon="clock-3"></div>
+            <div class="stat-copy"><span class="stat-label">Sem preview atual</span><strong id="metric-pending">—</strong><span class="stat-note">Aguardando ou desatualizado</span></div>
+          </article>
+        </section>
+
+        <div class="status-strip" role="status" aria-live="polite"><span class="sync-dot" id="sync-dot"></span><span id="sync-text">Conectando ao GitHub…</span><span class="strip-separator">·</span><span>Atualização periódica</span></div>
+
+        <div id="error-banner" class="error-banner" role="alert" hidden><span data-icon="alert-circle"></span><span id="error-message"></span><button id="retry-button" type="button">Tentar novamente</button></div>
+
+        <div class="content-grid">
+          <section class="panel panel-prs" aria-labelledby="prs-heading">
+            <div class="panel-header">
+              <div><div class="panel-overline">WORKSPACE / 01</div><h2 id="prs-heading">Pull requests</h2><p>Ambientes disponíveis para revisão e testes.</p></div>
+              <span class="section-count" id="pr-count">—</span>
+            </div>
+            <div class="pr-toolbar">
+              <div class="filter-controls" role="group" aria-label="Filtrar pull requests">
+                <button class="filter active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+                <button class="filter" type="button" data-filter="ready" aria-pressed="false">Publicados</button>
+                <button class="filter" type="button" data-filter="pending" aria-pressed="false">Pendentes</button>
+              </div>
+              <label class="search-box" for="pr-search"><span data-icon="search"></span><input id="pr-search" type="search" placeholder="Buscar PR" autocomplete="off" aria-label="Buscar pull request" /></label>
+            </div>
+            <div id="pr-list" class="pr-list" aria-live="polite"><div class="loading-card" aria-label="Carregando pull requests"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-sub"></div></div><div class="loading-card"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-sub"></div></div></div>
+            <div id="pr-truncated" class="panel-footnote" hidden>Mostrando até 30 PRs recentes.</div>
+          </section>
+
+          <section class="panel panel-activity" id="atividade" aria-labelledby="activity-heading">
+            <div class="panel-header"><div><div class="panel-overline">EVENTOS / 02</div><h2 id="activity-heading">Atividade recente</h2><p>Últimos eventos registrados no GitHub.</p></div><span class="activity-symbol" data-icon="activity"></span></div>
+            <div id="activity-list" class="activity-list" aria-live="polite"><div class="activity-placeholder skeleton"></div><div class="activity-placeholder skeleton"></div><div class="activity-placeholder skeleton"></div></div>
+            <a class="activity-link" href="https://github.com/kaykygarcia/academy-preview-api/deployments" target="_blank" rel="noopener noreferrer">Ver deployments no GitHub <span data-icon="arrow-up-right"></span></a>
+          </section>
+        </div>
+
+        <footer class="footer"><span>Kayky Deployments <span class="footer-dot">·</span> Feito para visualizar o que acontece em cada PR.</span><span>Status fornecido pelo GitHub; não é monitoramento contínuo de saúde do ECS.</span></footer>
+      </main>
+    </div>
+    <script type="module" src="/assets/app.js"></script>
+  </body>
+</html>
