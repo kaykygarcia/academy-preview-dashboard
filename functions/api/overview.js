@@ -40,7 +40,10 @@ export async function loadOverview({ token = '', fetchImpl = fetch } = {}) {
   async function githubGet(path) {
     const res = await fetchImpl(`${API_ROOT}${path}`, { headers });
     if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
       console.error('GitHub API request failed', {
+        githubMessage: errorBody.message || null,
+        documentationUrl: errorBody.documentation_url || null,
         path,
         status: res.status,
         authenticated: Boolean(token),
