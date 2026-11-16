@@ -33,6 +33,7 @@ function errorForGitHub(status, remaining) {
 export async function loadOverview({ token = '', fetchImpl = fetch } = {}) {
   const headers = {
     accept: 'application/vnd.github+json',
+    'user-agent': 'academy-preview-dashboard',
     'x-github-api-version': '2022-11-28',
   };
   if (token) headers.authorization = `Bearer ${token}`;
